@@ -1,3 +1,5 @@
+import os
+
 import requests
 from celery import shared_task
 
@@ -9,7 +11,8 @@ def helllo():
 
 @shared_task
 def disable_customer():
-    url = "https://isp.phenom-ventures.com/disable_customer"
+    route = os.getenv('BACKEND_ROUTE')
+    url = route + "/disable_customer"
     try:
         response = requests.get(url)
         print(response.json())
@@ -18,7 +21,8 @@ def disable_customer():
 
 @shared_task
 def activate_subscription():
-    url = "https://isp.phenom-ventures.com/enable_customer"
+    route = os.getenv('BACKEND_ROUTE')
+    url = route + "/enable_customer"
     try:
         response = requests.get(url)
         print(response.json())

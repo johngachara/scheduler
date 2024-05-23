@@ -126,7 +126,7 @@ STATIC_URL = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
-CELERY_BROKER_URL = 'amqp://john:j39342336i@54.244.205.196:5672//'
+CELERY_BROKER_URL = os.getenv('BROKER_URL')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CELERY_TIMEZONE = "Africa/Nairobi"
 CELERY_RESULT_BACKEND = 'django-db'
