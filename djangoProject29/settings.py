@@ -134,10 +134,10 @@ CELERY_CACHE_BACKEND = 'django-cache'
 CELERY_BEAT_SCHEDULE = {
     'disable': {
         'task': 'scheduler.tasks.disable_customer',
-        'schedule': 10,
+        'schedule': 60,
     },
 'enable': {
         'task': 'scheduler.tasks.activate_subscription',
-        'schedule': 10,
+        'schedule': 60,
     }
 }
