@@ -31,6 +31,7 @@ def activate_subscription():
 
 @shared_task
 def ping_render_server():
+    print("gi")
     server = os.getenv('RENDER_SERVER')
     try:
         response = requests.get(server)
