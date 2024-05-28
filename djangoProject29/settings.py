@@ -134,6 +134,6 @@ CELERY_CACHE_BACKEND = 'django-cache'
 CELERY_BEAT_SCHEDULE = {
     'ping': {
         'task': 'scheduler.tasks.ping_render_server',
-        'schedule': 10,
+        'schedule': 300,
     },
 }
