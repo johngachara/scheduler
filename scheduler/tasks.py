@@ -28,3 +28,12 @@ def activate_subscription():
         print(response.json())
     except Exception as e:
         print(e)
+
+@shared_task
+def ping_render_server():
+    server = os.getenv('RENDER_SERVER')
+    try:
+        response = requests.get(server)
+        print(response.json())
+    except Exception as e:
+        print(e)

@@ -132,12 +132,8 @@ CELERY_TIMEZONE = "Africa/Nairobi"
 CELERY_RESULT_BACKEND = 'django-db'
 CELERY_CACHE_BACKEND = 'django-cache'
 CELERY_BEAT_SCHEDULE = {
-    'disable': {
-        'task': 'scheduler.tasks.disable_customer',
-        'schedule': 60,
+    'ping': {
+        'task': 'scheduler.tasks.ping_render_server',
+        'schedule': 300,
     },
-'enable': {
-        'task': 'scheduler.tasks.activate_subscription',
-        'schedule': 60,
-    }
 }
