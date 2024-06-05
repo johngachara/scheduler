@@ -138,6 +138,6 @@ CELERY_BEAT_SCHEDULE = {
     },
     'send':{
         'task':'scheduler.tasks.send_alltech_sales',
-        'schedule':crontab(minute = 3 , hour = 12)
+        'schedule':crontab(minute = 22 , hour = 12)
     }
 }
