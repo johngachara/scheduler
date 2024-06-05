@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from pathlib import Path
 from dotenv import load_dotenv
-
+from celery.schedules import crontab
 # Load .env file
 env_path = Path('.') / '.env'
 load_dotenv(dotenv_path=env_path)
@@ -136,4 +136,8 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'scheduler.tasks.ping_render_server',
         'schedule': 200,
     },
+    'send':{
+        'task':'scheduler.tasks.send_alltech_sales',
+        'schedule':crontab(minute = 10 , hour = 12)
+    }
 }

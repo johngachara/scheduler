@@ -38,3 +38,19 @@ def ping_render_server():
         print(response.json())
     except Exception as e:
         print(e)
+
+@shared_task
+def send_alltech_sales():
+    print("Sending Sales")
+    url = os.getenv("ALLTECH_SERVER")
+    route = url + "api/send_sale2"
+    auth_url = url + "api/token/"
+    username = os.getenv("ALLTECH_USERNAME")
+    password = os.getenv("ALLTECH_PASSWORD")
+    auth = requests.post(auth_url,json={"username":username,"password":password}).json()
+    token = auth['access']
+    try:
+        send_sale = requests.get(route, headers={"Authorization": "Bearer " + token}).json()
+        print(send_sale)
+    except Exception as e:
+        print(e)
