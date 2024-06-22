@@ -67,3 +67,11 @@ def send_alltech_low_stock():
         print(e)
 
 
+@shared_task
+def ping_sequelizer_server():
+    print("Task executed for sequelizer_server")
+    try:
+        response = requests.get('https://sequelizer.onrender.com/FindAll')
+        print(response.json())
+    except Exception as e:
+        print(e)

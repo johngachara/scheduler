@@ -138,10 +138,14 @@ CELERY_BEAT_SCHEDULE = {
     },
     'send':{
         'task':'scheduler.tasks.send_alltech_sales',
-        'schedule':crontab(minute = 10 , hour = 8,day_of_week=6)
+        'schedule':crontab(minute = 10 , hour = 8,day_of_week='sat')
     },
     'low_stock':{
         'task':'scheduler.tasks.send_alltech_low_stock',
         'schedule':crontab(minute = 10 , hour = 8,day_of_week='mon,wed,fri')
-}
+},
+    'sequelizer':{
+        'task':'scheduler.tasks.ping_sequelizer_server',
+        'schedule': 200,
+    }
 }
