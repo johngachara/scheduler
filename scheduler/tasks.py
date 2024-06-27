@@ -71,7 +71,7 @@ def send_alltech_low_stock():
 def ping_sequelizer_server():
     print("Task executed for sequelizer_server")
     try:
-        response = requests.get('https://sequelizer.onrender.com/FindAll')
+        response = requests.get('https://sequelizer-5wkz.onrender.com/FindAll')
         print(response.json())
     except Exception as e:
         print(e)
