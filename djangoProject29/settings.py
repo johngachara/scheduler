@@ -147,5 +147,9 @@ CELERY_BEAT_SCHEDULE = {
     'sequelizer':{
         'task':'scheduler.tasks.ping_sequelizer_server',
         'schedule': 200,
-    }
+    },
+    'unpaid_orders':{
+        'task':'scheduler.tasks.send_unpaid_orders',
+        'schedule':crontab(minute = 10 , hour = 8,day_of_week='mon,tue,wed,thur,fri')
+},
 }

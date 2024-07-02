@@ -68,6 +68,18 @@ def send_alltech_low_stock():
 
 
 @shared_task
+def send_unpaid_orders():
+    print("Sending Unpaid Orders")
+    url = os.getenv("ALLTECH_SERVER")
+    unpaid_orders_route = url + "api/send_unpaid"
+    try:
+        send_unpaid = requests.post(unpaid_orders_route).json()
+        print(send_unpaid)
+    except Exception as e:
+        print(e)
+
+
+@shared_task
 def ping_sequelizer_server():
     print("Task executed for sequelizer_server")
     try:
