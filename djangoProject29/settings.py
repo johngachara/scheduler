@@ -150,6 +150,6 @@ CELERY_BEAT_SCHEDULE = {
     },
     'unpaid_orders':{
         'task':'scheduler.tasks.send_unpaid_orders',
-        'schedule':crontab(minute = 10 , hour = 8,day_of_week='mon,tue,wed,thur,fri')
+        'schedule':crontab(minute = 20 , hour = 16,day_of_week='mon,tue,wed,thur,fri,sat,sun')
 },
 }
