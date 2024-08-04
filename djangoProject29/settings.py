@@ -126,30 +126,69 @@ STATIC_URL = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
-CELERY_BROKER_URL = os.getenv('BROKER_URL')
+#CELERY_BROKER_URL = os.getenv('BROKER_URL')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CELERY_TIMEZONE = "Africa/Nairobi"
 CELERY_RESULT_BACKEND = 'django-db'
 CELERY_CACHE_BACKEND = 'django-cache'
 CELERY_BEAT_SCHEDULE = {
-    'ping': {
-        'task': 'scheduler.tasks.ping_render_server',
-        'schedule': 200,
+    'shop2_lcd':{
+        'task':'scheduler.tasks.send_shop2_lcd',
+        'schedule':crontab(minute = 30 , hour = 7,day_of_week='sun')
     },
-    'send':{
-        'task':'scheduler.tasks.send_alltech_sales',
-        'schedule':crontab(minute = 10 , hour = 8,day_of_week='sat')
-    },
-    'low_stock':{
-        'task':'scheduler.tasks.send_alltech_low_stock',
-        'schedule':crontab(minute = 10 , hour = 8,day_of_week='mon,wed,fri')
-},
     'sequelizer':{
         'task':'scheduler.tasks.ping_sequelizer_server',
         'schedule': 200,
     },
-    'unpaid_orders':{
-        'task':'scheduler.tasks.send_unpaid_orders',
-        'schedule':crontab(minute = 20 , hour = 16,day_of_week='mon,tue,wed,thur,fri,sat,sun')
-},
+    'shop2_accessories': {
+        'task': 'scheduler.tasks.send_shop2_accessories',
+        'schedule': crontab(minute=30, hour=7, day_of_week='sun')
+    },
+    'shop1_accessories': {
+        'task': 'scheduler.tasks.send_shop1_accessories',
+        'schedule': crontab(minute=30, hour=7, day_of_week='sun')
+    },
+    'shop1_lcd': {
+        'task': 'scheduler.tasks.send_shop1_lcd',
+        'schedule': crontab(minute=30, hour=7, day_of_week='sun')
+    },
+}
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'debug.log',
+            'formatter': 'verbose',
+        },
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file', 'console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'scheduler': {
+            'handlers': ['file', 'console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
 }

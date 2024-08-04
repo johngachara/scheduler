@@ -1,89 +1,133 @@
+import logging
 import os
 
 import requests
 from celery import shared_task
 
-
+logger = logging.getLogger(__name__)
 @shared_task
-def helllo():
+def hello():
+    token = get_shop2_token()
+    print(token)
     print("Hello World")
 
 
-@shared_task
-def disable_customer():
-    route = os.getenv('BACKEND_ROUTE')
-    url = route + "/disable_customer"
+def get_sequelizer_token():
     try:
-        response = requests.get(url)
-        print(response.json())
-    except Exception as e:
+        print("Getting sequelizer token")
+        url = os.getenv('SEQUELIZER_AUTH')
+        username = os.getenv('SEQUELIZER_USERNAME')
+        password = os.getenv('SEQUELIZER_PASSWORD')
+        response = requests.post(url, json={'username': username, 'password': password}).json()
+        token = response['token']
+        return token
+    except requests.exceptions.RequestException as e:
         print(e)
 
-@shared_task
-def activate_subscription():
-    route = os.getenv('BACKEND_ROUTE')
-    url = route + "/enable_customer"
-    try:
-        response = requests.get(url)
-        print(response.json())
-    except Exception as e:
-        print(e)
 
-@shared_task
-def ping_render_server():
-    print("Task executed")
-    server = os.getenv('RENDER_SERVER')
+def get_shop2_token():
     try:
-        response = requests.get(server)
-        print(response.json())
-    except Exception as e:
-        print(e)
-
-@shared_task
-def send_alltech_sales():
-    print("Sending Sales")
-    url = os.getenv("ALLTECH_SERVER")
-    route = url + "api/send_sale2"
-    auth_url = url + "api/token/"
-    username = os.getenv("ALLTECH_USERNAME")
-    password = os.getenv("ALLTECH_PASSWORD")
-    auth = requests.post(auth_url,json={"username":username,"password":password}).json()
-    token = auth['access']
-    try:
-        send_sale = requests.get(route, headers={"Authorization": "Bearer " + token}).json()
-        print(send_sale)
-    except Exception as e:
-        print(e)
-
-@shared_task
-def send_alltech_low_stock():
-    print("Sending Low Stock")
-    url = os.getenv("ALLTECH_SERVER")
-    route = url + "api/send-notification"
-    try:
-        send_sale = requests.post(route).json()
-        print(send_sale)
-    except Exception as e:
+        print("Getting shop2 token")
+        url = os.getenv('ALLTECH_AUTH')
+        username = os.getenv('ALLTECH_USERNAME')
+        password = os.getenv('ALLTECH_PASSWORD')
+        response = requests.post(url, json={'username': username, 'password': password}).json()
+        token = response['access']
+        return token
+    except requests.exceptions.RequestException as e:
         print(e)
 
 
 @shared_task
-def send_unpaid_orders():
-    print("Sending Unpaid Orders")
-    url = os.getenv("ALLTECH_SERVER")
-    unpaid_orders_route = url + "api/send_unpaid"
+def send_shop2_accessories():
     try:
-        send_unpaid = requests.post(unpaid_orders_route).json()
-        print(send_unpaid)
+        logger.info("Sending shop2 accessories")
+        token = get_sequelizer_token()
+        logger.info("Token obtained: %s", token)
+
+        url = os.getenv('SHOP2_ACCESSORIES_URL')
+        headers = {'Authorization': f'Bearer {token}'}
+
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()  # Raises an HTTPError for bad responses
+
+        logger.info('Accessories response: %s', response.json())
+        return "Task completed successfully"
+    except requests.exceptions.HTTPError as http_err:
+        logger.error('HTTP error occurred: %s', http_err)
+    except requests.exceptions.RequestException as req_err:
+        logger.error('Request exception occurred: %s', req_err)
     except Exception as e:
-        print(e)
+        logger.error('General error occurred: %s', str(e))
+
+    return "Task failed"
+
+
+@shared_task
+def send_shop2_lcd():
+    try:
+        logger.info("Sending shop2 LCD")
+        token = get_shop2_token()
+        url = os.getenv('SHOP2_LCD_URL')
+        headers = {'Authorization': f'Bearer {token}'}
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        logger.info('LCD response: %s', response.json())
+        return "Task completed successfully"
+    except requests.exceptions.HTTPError as http_err:
+        logger.error('HTTP error occurred: %s', http_err)
+    except requests.exceptions.RequestException as req_err:
+        logger.error('Request exception occurred: %s', req_err)
+    except Exception as e:
+        logger.error('General error occurred: %s', str(e))
+    return "Task failed"
+
+
+@shared_task
+def send_shop1_accessories():
+    try:
+        logger.info("Sending shop1 accessories")
+        url = os.getenv('SHOP1_ACCESSORIES_URL')
+        token = get_shop2_token()
+        headers = {'Authorization': f'Bearer {token}'}
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        logger.info('Accessories response: %s', response.json())
+        return "Task completed successfully"
+    except requests.exceptions.HTTPError as http_err:
+        logger.error('HTTP error occurred: %s', http_err)
+    except requests.exceptions.RequestException as req_err:
+        logger.error('Request exception occurred: %s', req_err)
+    except Exception as e:
+        logger.error('General error occurred: %s', str(e))
+
+
+@shared_task
+def send_shop1_lcd():
+    try:
+        logger.info("Sending shop1 LCD")
+        token = get_shop2_token()
+        url = os.getenv('SHOP1_LCD_URL')
+        headers = {'Authorization': f'Bearer {token}'}
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        logger.info('LCD response: %s', response.json())
+        return "Task completed successfully"
+    except requests.exceptions.HTTPError as http_err:
+        logger.error('HTTP error occurred: %s', http_err)
+    except requests.exceptions.RequestException as req_err:
+        logger.error('Request exception occurred: %s', req_err)
+    except Exception as e:
+        logger.error('General error occurred: %s', str(e))
+
+    return "Task failed"
 
 
 @shared_task
 def ping_sequelizer_server():
     print("Task executed for sequelizer_server")
     try:
-        response = requests.get('https://sequelizer-5wkz.onrender.com/FindAll')
+        response = requests.get(os.getenv('SEQUELIZER_URL'))
         print(response.json())
     except Exception as e:
         print(e)
