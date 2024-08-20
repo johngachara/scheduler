@@ -126,33 +126,38 @@ STATIC_URL = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
-#CELERY_BROKER_URL = os.getenv('BROKER_URL')
+CELERY_BROKER_URL = os.getenv('BROKER_URL')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CELERY_TIMEZONE = "Africa/Nairobi"
 CELERY_RESULT_BACKEND = 'django-db'
 CELERY_CACHE_BACKEND = 'django-cache'
+# To avoid the CPendingDeprecationWarning
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_BEAT_SCHEDULE = {
     'shop2_lcd':{
         'task':'scheduler.tasks.send_shop2_lcd',
-        'schedule':crontab(minute = 30 , hour = 7,day_of_week='sun')
-    },
-    'sequelizer':{
-        'task':'scheduler.tasks.ping_sequelizer_server',
-        'schedule': 200,
+        'schedule':crontab(minute = 22 , hour = 16,day_of_week='mon')
     },
     'shop2_accessories': {
         'task': 'scheduler.tasks.send_shop2_accessories',
-        'schedule': crontab(minute=30, hour=7, day_of_week='sun')
+        'schedule': crontab(minute=33, hour=16, day_of_week='mon')
     },
     'shop1_accessories': {
         'task': 'scheduler.tasks.send_shop1_accessories',
-        'schedule': crontab(minute=30, hour=7, day_of_week='sun')
+        'schedule': crontab(minute=40, hour=16, day_of_week='mon')
     },
     'shop1_lcd': {
         'task': 'scheduler.tasks.send_shop1_lcd',
-        'schedule': crontab(minute=30, hour=7, day_of_week='sun')
+        'schedule': crontab(minute=53, hour=16, day_of_week='mon')
     },
 }
+
+
+#For testing
+'''    'test':{
+        'task':'scheduler.tasks.hello',
+        'schedule' : 30
+    }'''
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

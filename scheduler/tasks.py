@@ -5,10 +5,10 @@ import requests
 from celery import shared_task
 
 logger = logging.getLogger(__name__)
+
+
 @shared_task
 def hello():
-    token = get_shop2_token()
-    print(token)
     print("Hello World")
 
 
@@ -123,11 +123,3 @@ def send_shop1_lcd():
     return "Task failed"
 
 
-@shared_task
-def ping_sequelizer_server():
-    print("Task executed for sequelizer_server")
-    try:
-        response = requests.get(os.getenv('SEQUELIZER_URL'))
-        print(response.json())
-    except Exception as e:
-        print(e)
