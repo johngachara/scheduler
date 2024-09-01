@@ -43,8 +43,6 @@ def send_shop2_accessories():
     try:
         logger.info("Sending shop2 accessories")
         token = get_sequelizer_token()
-        logger.info("Token obtained: %s", token)
-
         url = os.getenv('SHOP2_ACCESSORIES_URL')
         headers = {'Authorization': f'Bearer {token}'}
 

@@ -136,19 +136,19 @@ CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_BEAT_SCHEDULE = {
     'shop2_lcd':{
         'task':'scheduler.tasks.send_shop2_lcd',
-        'schedule':crontab(minute = 22 , hour = 16,day_of_week='mon')
+        'schedule':crontab(minute = 34 , hour = 11,day_of_week='sun')
     },
     'shop2_accessories': {
         'task': 'scheduler.tasks.send_shop2_accessories',
-        'schedule': crontab(minute=33, hour=16, day_of_week='mon')
+        'schedule': crontab(minute=34, hour=11, day_of_week='sun')
     },
     'shop1_accessories': {
         'task': 'scheduler.tasks.send_shop1_accessories',
-        'schedule': crontab(minute=40, hour=16, day_of_week='mon')
+        'schedule': crontab(minute=34, hour=11, day_of_week='sun')
     },
     'shop1_lcd': {
         'task': 'scheduler.tasks.send_shop1_lcd',
-        'schedule': crontab(minute=53, hour=16, day_of_week='mon')
+        'schedule': crontab(minute=34, hour=11, day_of_week='sun')
     },
 }
 
