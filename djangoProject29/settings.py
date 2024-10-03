@@ -27,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure--a!v-kf*r_3+a8fhl!!clq2x)=2y3+4va71osgj=^f1^hebf(f'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
 
@@ -136,28 +136,23 @@ CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_BEAT_SCHEDULE = {
     'shop2_lcd':{
         'task':'scheduler.tasks.send_shop2_lcd',
-        'schedule':crontab(minute = 34 , hour = 11,day_of_week='sun')
+        'schedule':crontab(minute = 30 , hour = 11,day_of_week='sat')
     },
     'shop2_accessories': {
         'task': 'scheduler.tasks.send_shop2_accessories',
-        'schedule': crontab(minute=34, hour=11, day_of_week='sun')
+        'schedule': crontab(minute=30, hour=11, day_of_week='sat')
     },
     'shop1_accessories': {
         'task': 'scheduler.tasks.send_shop1_accessories',
-        'schedule': crontab(minute=34, hour=11, day_of_week='sun')
+        'schedule': crontab(minute=30, hour=11, day_of_week='sat')
     },
     'shop1_lcd': {
         'task': 'scheduler.tasks.send_shop1_lcd',
-        'schedule': crontab(minute=34, hour=11, day_of_week='sun')
+        'schedule': crontab(minute=30, hour=11, day_of_week='sat')
     },
 }
 
 
-#For testing
-'''    'test':{
-        'task':'scheduler.tasks.hello',
-        'schedule' : 30
-    }'''
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

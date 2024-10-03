@@ -16,9 +16,7 @@ def get_sequelizer_token():
     try:
         print("Getting sequelizer token")
         url = os.getenv('SEQUELIZER_AUTH')
-        username = os.getenv('SEQUELIZER_USERNAME')
-        password = os.getenv('SEQUELIZER_PASSWORD')
-        response = requests.post(url, json={'username': username, 'password': password}).json()
+        response = requests.post(url,json={'api_key': os.getenv('CELERY_API_KEY')}).json()
         token = response['token']
         return token
     except requests.exceptions.RequestException as e:
@@ -29,9 +27,7 @@ def get_shop2_token():
     try:
         print("Getting shop2 token")
         url = os.getenv('ALLTECH_AUTH')
-        username = os.getenv('ALLTECH_USERNAME')
-        password = os.getenv('ALLTECH_PASSWORD')
-        response = requests.post(url, json={'username': username, 'password': password}).json()
+        response = requests.post(url, json={'api_key': os.getenv('CELERY_API_KEY')}).json()
         token = response['access']
         return token
     except requests.exceptions.RequestException as e:
@@ -44,9 +40,10 @@ def send_shop2_accessories():
         logger.info("Sending shop2 accessories")
         token = get_sequelizer_token()
         url = os.getenv('SHOP2_ACCESSORIES_URL')
-        headers = {'Authorization': f'Bearer {token}'}
+        headers = {'celery-auth-token':token}
 
         response = requests.get(url, headers=headers)
+        print(response)
         response.raise_for_status()  # Raises an HTTPError for bad responses
 
         logger.info('Accessories response: %s', response.json())
