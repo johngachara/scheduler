@@ -43,7 +43,6 @@ def send_shop2_accessories():
         headers = {'celery-auth-token':token}
 
         response = requests.get(url, headers=headers)
-        print(response)
         response.raise_for_status()  # Raises an HTTPError for bad responses
 
         logger.info('Accessories response: %s', response.json())

@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure--a!v-kf*r_3+a8fhl!!clq2x)=2y3+4va71osgj=^f1^hebf(f
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["alltech.gachara.store"]
 
 
 # Application definition
@@ -112,11 +112,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
-
-USE_I18N = True
-
+TIME_ZONE = 'Africa/Nairobi'
 USE_TZ = True
+USE_I18N = True
 
 
 # Static files (CSS, JavaScript, Images)
@@ -129,6 +127,7 @@ STATIC_URL = 'static/'
 CELERY_BROKER_URL = os.getenv('BROKER_URL')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CELERY_TIMEZONE = "Africa/Nairobi"
+CELERY_ENABLE_UTC = False
 CELERY_RESULT_BACKEND = 'django-db'
 CELERY_CACHE_BACKEND = 'django-cache'
 # To avoid the CPendingDeprecationWarning
@@ -136,11 +135,11 @@ CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_BEAT_SCHEDULE = {
     'shop2_lcd':{
         'task':'scheduler.tasks.send_shop2_lcd',
-        'schedule':crontab(minute = 30 , hour = 11,day_of_week='sat')
+        'schedule':crontab(minute=50 , hour = 15,day_of_week='sat')
     },
     'shop2_accessories': {
         'task': 'scheduler.tasks.send_shop2_accessories',
-        'schedule': crontab(minute=30, hour=11, day_of_week='sat')
+        'schedule': crontab(minute=30, hour=12, day_of_week='sat')
     },
     'shop1_accessories': {
         'task': 'scheduler.tasks.send_shop1_accessories',
@@ -148,7 +147,7 @@ CELERY_BEAT_SCHEDULE = {
     },
     'shop1_lcd': {
         'task': 'scheduler.tasks.send_shop1_lcd',
-        'schedule': crontab(minute=30, hour=11, day_of_week='sat')
+        'schedule': crontab(minute=2, hour=13, day_of_week='wed')
     },
 }
 
