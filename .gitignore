@@ -2,3 +2,6 @@
 db.sqlite3
 debug.log
 loggers.log
+celerybeat-schedule.bak
+celerybeat-schedule.dat
+celerybeat-schedule.dir
