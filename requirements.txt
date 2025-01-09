@@ -9,7 +9,7 @@ atomicwrites==1.4.0
 attrs==23.2.0
 Babel==2.10.3
 backports.weakref==1.0.post1
-bcc==0.29.1
+#bcc==0.29.1
 bcrypt==3.2.2
 billiard==4.2.0
 blinker==1.7.0
