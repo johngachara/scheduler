@@ -75,7 +75,7 @@ def send_shop2_lcd():
     except Exception as e:
         logger.error('General error occurred: %s', str(e))
     return "Task failed"
-
+'''
 
 @shared_task
 def send_shop1_accessories():
@@ -115,5 +115,5 @@ def send_shop1_lcd():
         logger.error('General error occurred: %s', str(e))
 
     return "Task failed"
-
+'''
 
