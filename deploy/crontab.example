@@ -1,0 +1,32 @@
+# Alltech scheduled jobs.
+#
+# This replaces CELERY_BEAT_SCHEDULE. Each line starts a container, runs one
+# job, and lets it exit -- nothing runs between these times.
+#
+# Install with:  crontab -l | cat - deploy/crontab.example | crontab -
+# Check with:    crontab -l
+#
+# Times are the server's local time. Confirm it is Africa/Nairobi before
+# trusting these -- a server left on UTC runs every job three hours early:
+#   timedatectl        # expect: Time zone: Africa/Nairobi
+#
+# --env-file carries CELERY_KEY and ALLTECH_API_URL. --rm matters: without it
+# every run leaves a dead container behind and the disk fills up quietly.
+
+SHELL=/bin/bash
+DOCKER=/usr/bin/docker
+IMAGE=gachar4/alltech-scheduler:latest
+ENVFILE=/opt/alltech/scheduler.env
+LOG=/var/log/alltech-scheduler.log
+
+# Daily sales report, 21:00, after the shop closes.
+0 21 * * * $DOCKER run --rm --env-file $ENVFILE $IMAGE send_sales_report >> $LOG 2>&1
+
+# Yesterday's AI insight, 07:00, before the shop opens.
+0 7 * * * $DOCKER run --rm --env-file $ENVFILE $IMAGE send_daily_insights >> $LOG 2>&1
+
+# Weekly insight, Saturday 18:00.
+0 18 * * sat $DOCKER run --rm --env-file $ENVFILE $IMAGE send_weekly_insights >> $LOG 2>&1
+
+# Keep the log from growing without limit. Prefer logrotate if it is installed.
+0 3 * * 0 /usr/bin/find /var/log/alltech-scheduler.log -size +50M -delete

@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from pathlib import Path
 from dotenv import load_dotenv
-from celery.schedules import crontab
 # Load .env file
 env_path = Path('.') / '.env'
 load_dotenv(dotenv_path=env_path)
@@ -42,7 +41,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'scheduler.apps.SchedulerConfig',
-    'django_celery_results'
 ]
 
 MIDDLEWARE = [
@@ -124,25 +122,16 @@ STATIC_URL = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
-CELERY_BROKER_URL = os.getenv('BROKER_URL')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-CELERY_TIMEZONE = "Africa/Nairobi"
-CELERY_ENABLE_UTC = False
-CELERY_RESULT_BACKEND = 'django-db'
-CELERY_CACHE_BACKEND = 'django-cache'
-# To avoid the CPendingDeprecationWarning
-CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
-CELERY_BEAT_SCHEDULE = {
-    'shop2_lcd':{
-        'task':'scheduler.tasks.send_shop2_lcd',
-        'schedule':crontab(minute=30 , hour = 10,day_of_week='sat')
-    },
-    'shop1_accessories': {
-        'task': 'scheduler.tasks.send_shop1_accessories',
-        'schedule': crontab(minute=30, hour=10, day_of_week='sat')
-    },
-}
 
+# Celery and its beat schedule are gone. The jobs are run by the server's cron,
+# which starts this container shortly before a job is due and lets it exit when
+# the job is done. Keeping Celery Beat as well would mean two schedulers
+# disagreeing about when things run, plus a message broker and a worker process
+# held open all day -- for three jobs. `manage.py send_daily_insights` is the
+# whole of what was needed.
+#
+# See deploy/crontab.example for the schedule that replaced CELERY_BEAT_SCHEDULE.
 
 LOGGING = {
     'version': 1,
@@ -158,12 +147,6 @@ LOGGING = {
         },
     },
     'handlers': {
-        'file': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': 'debug.log',
-            'formatter': 'verbose',
-        },
         'console': {
             'level': 'INFO',
             'class': 'logging.StreamHandler',
@@ -172,12 +155,12 @@ LOGGING = {
     },
     'loggers': {
         'django': {
-            'handlers': ['file', 'console'],
+            'handlers': ['console'],
             'level': 'INFO',
             'propagate': True,
         },
         'scheduler': {
-            'handlers': ['file', 'console'],
+            'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': True,
         },
