@@ -1,0 +1,80 @@
+name: Build scheduler image
+
+on:
+  push:
+    branches: [alltechv2, prod-test]
+  workflow_dispatch:
+
+env:
+  IMAGE: gachar4/alltech-scheduler
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: pip install -r requirements.txt
+      # Django's own checks catch a broken settings module or a command that
+      # cannot be imported -- which for a cron job would otherwise surface at
+      # 07:00 as a container that exited immediately.
+      - name: Django checks
+        env:
+          SECRET_KEY: test-secret-key-for-ci
+          DEBUG: 'True'
+        run: |
+          python manage.py check
+          # Each job must at least be loadable and describe itself.
+          for job in send_sales_report send_daily_insights send_weekly_insights; do
+            python manage.py help "$job" > /dev/null
+            echo "ok: $job"
+          done
+
+  build:
+    needs: check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.IMAGE }}:${{ github.sha }}
+            ${{ env.IMAGE }}:${{ github.ref_name }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref_name == 'alltechv2'
+    steps:
+      # There is no service to restart: cron starts a container per job. The
+      # deploy is just making sure the next run picks up the new image, and
+      # proving it can actually run before waiting until 07:00 to find out.
+      - name: Pull the image and smoke-test it
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            set -euo pipefail
+            docker pull ${{ env.IMAGE }}:alltechv2
+
+            # `help` touches Django setup and command loading without calling
+            # the API, so it proves the image works without sending anything.
+            docker run --rm --env-file /opt/alltech/backend/scheduler.env \
+              ${{ env.IMAGE }}:alltechv2 help send_daily_insights > /dev/null
+            echo "scheduler image is runnable"
+
+            docker image prune -f --filter "until=168h" || true
