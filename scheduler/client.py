@@ -12,7 +12,7 @@ import requests
 
 logger = logging.getLogger('scheduler')
 
-TIMEOUT = 60
+TIMEOUT = 150
 
 
 class JobError(RuntimeError):
